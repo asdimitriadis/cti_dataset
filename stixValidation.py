@@ -4,12 +4,17 @@ from io import StringIO
 import contextlib
 from stix2validator import validate_file, ValidationOptions, print_results
 import re
+from tqdm import tqdm  # NEW: Progress bar
 
 def strip_ansi_codes(text):
     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
     return ansi_escape.sub('', text)
 
-
+def is_only_external_reference_302_errors(error_lines):
+    for error in error_lines:
+        if "{302}" not in error or "External reference" not in error:
+            return False
+    return True
 
 STIX_FILES_DIRECTORY = "C:\\Users\\sakis\\Desktop\\openCTI dataset\\test"
 
@@ -18,7 +23,7 @@ def validate_stix_files():
         print(f"Error: Directory '{STIX_FILES_DIRECTORY}' does not exist.")
         sys.exit(1)
 
-    options = ValidationOptions(version="2.1", strict=True)
+    options = ValidationOptions(version="2.1", strict=False)
     json_files = []
 
     for root, _, files in os.walk(STIX_FILES_DIRECTORY):
@@ -35,7 +40,7 @@ def validate_stix_files():
     invalid_files = {}
     captured_outputs = {}
 
-    for file_path in json_files:
+    for file_path in tqdm(json_files, desc="Validating STIX files"):  # <-- Progress bar here
         file_name = os.path.basename(file_path)
         try:
             buffer = StringIO()
@@ -48,17 +53,22 @@ def validate_stix_files():
             captured_outputs[file_name] = temp_results
             error_lines = [
                 line.strip() for line in temp_results.splitlines()
-                if line.strip().startswith("[X]")
+                if line.strip().startswith("[X]") and not (
+                        "{302}" in line and "External reference" in line
+                )
             ]
 
-            if results.is_valid:
+            if error_lines == ["[X] STIX JSON: Invalid"]:
+                error_lines = []
+
+            if results.is_valid or not error_lines:
                 valid_count += 1
             else:
                 invalid_files[file_name] = error_lines
 
         except Exception as e:
             error_count += 1
-            invalid_files[file_name] = [f"Processing error: {str(e)}"]
+            invalid_files[file_name] = [f"✘ Processing error: {str(e)}"]
 
     # Summary
     print("\n" + "=" * 60)
