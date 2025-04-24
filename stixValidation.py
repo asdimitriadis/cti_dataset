@@ -16,7 +16,7 @@ def is_only_external_reference_302_errors(error_lines):
             return False
     return True
 
-STIX_FILES_DIRECTORY = "C:\\Users\\sakis\\Desktop\\openCTI dataset\\test"
+STIX_FILES_DIRECTORY = "C:\\Users\\sakis\\Desktop\\openCTI dataset\\cleaned_dataset"
 
 def validate_stix_files():
     if not os.path.exists(STIX_FILES_DIRECTORY):

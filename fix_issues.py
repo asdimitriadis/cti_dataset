@@ -9,6 +9,8 @@ from urllib.parse import quote, urlparse, urlunparse
 # Characters commonly seen in malformed URLs
 BAD_URL_CHARS = ['[', ']', '|', '\\', '^', '"', '”', '“', "'", '‘', '’', '…', '\n', '\t']
 
+STIX_FILES_DIRECTORY = "C:\\Users\\sakis\\Desktop\\openCTI dataset\\cleaned_dataset"
+
 
 def clean_and_encode_url(url):
     # Remove invisible Unicode/control characters (includes \u2028 and others)
@@ -64,7 +66,6 @@ def fix_vulnerability_external_references(objects):
                 if cve_pattern.match(external_id):
                     ref["source_name"] = "cve"
 
-STIX_FILES_DIRECTORY = "C:\\Users\\sakis\\Desktop\\openCTI dataset\\test"
 
 UNWANTED_KEYS = [
     "x_opencti_id",

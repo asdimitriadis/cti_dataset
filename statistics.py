@@ -4,7 +4,7 @@ from collections import Counter, defaultdict
 from tqdm import tqdm  # Progress bar
 
 # Set your directory
-STIX_FILES_DIRECTORY = "C:\\Users\\sakis\\Desktop\\openCTI dataset\\test"
+STIX_FILES_DIRECTORY = "C:\\Users\\sakis\\Desktop\\openCTI dataset\\cleaned_dataset"
 
 # All standard STIX 2.1 types (SDO + SCO + SRO + marking + bundle)
 OFFICIAL_STIX_TYPES = {
